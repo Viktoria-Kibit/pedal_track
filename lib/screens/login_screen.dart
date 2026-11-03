@@ -4,8 +4,7 @@ import '../core/widgets/custom_button.dart';
 import '../core/widgets/custom_textfield.dart';
 
 import 'register_screen.dart';
-
-import 'home_screen.dart';
+import 'main_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -75,9 +74,11 @@ class LoginScreen extends StatelessWidget {
                 text: 'Login',
                 onPressed: () {
                   // Перехід на головний екран
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const MainScreen(),
+                    ), // Замість HomeScreen
                   );
                 },
               ),

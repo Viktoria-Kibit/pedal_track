@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../core/widgets/custom_button.dart';
-import 'home_screen.dart';
 import '../core/widgets/custom_textfield.dart';
+import 'main_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -89,10 +89,11 @@ class RegisterScreen extends StatelessWidget {
               CustomButton(
                 text: 'Register',
                 onPressed: () {
-                  // Перехід на головний екран після "реєстрації"
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const MainScreen(),
+                    ), // Замість HomeScreen
                   );
                 },
               ),

@@ -1,8 +1,6 @@
 // lib/screens/rides_screen.dart
 import 'package:flutter/material.dart';
 
-import 'home_screen.dart';
-import 'profile_screen.dart';
 import 'add_ride_screen.dart';
 
 class RidesScreen extends StatefulWidget {
@@ -13,14 +11,40 @@ class RidesScreen extends StatefulWidget {
 }
 
 class _RidesScreenState extends State<RidesScreen> {
-  int _selectedIndex = 1;
-
-  // Статичні дані про поїздки
+  // Статичні дані про поїздки з розширеними полями для редагування
   static const List<Map<String, String>> _mockRides = [
-    {'date': 'Sep 28, 2026', 'distance': '45.2 km', 'duration': '2h 15m'},
-    {'date': 'Sep 25, 2026', 'distance': '32.1 km', 'duration': '1h 38m'},
-    {'date': 'Sep 22, 2026', 'distance': '18.5 km', 'duration': '55m'},
-    {'date': 'Sep 19, 2026', 'distance': '50.0 km', 'duration': '2h 40m'},
+    {
+      'date': 'Sep 28, 2026',
+      'distance': '45.2 km',
+      'duration': '2h 15m',
+      'hours': '2 h',
+      'minutes': '15 min',
+      'notes': 'Great morning ride along the river side',
+    },
+    {
+      'date': 'Sep 25, 2026',
+      'distance': '32.1 km',
+      'duration': '1h 38m',
+      'hours': '1 h',
+      'minutes': '38 min',
+      'notes': 'Evening sprint with friends',
+    },
+    {
+      'date': 'Sep 22, 2026',
+      'distance': '18.5 km',
+      'duration': '55m',
+      'hours': '0 h',
+      'minutes': '55 min',
+      'notes': 'Short commute to university',
+    },
+    {
+      'date': 'Sep 19, 2026',
+      'distance': '50.0 km',
+      'duration': '2h 40m',
+      'hours': '2 h',
+      'minutes': '40 min',
+      'notes': 'Weekend long distance ride',
+    },
   ];
 
   @override
@@ -38,7 +62,7 @@ class _RidesScreenState extends State<RidesScreen> {
             fontSize: 22,
           ),
         ),
-        automaticallyImplyLeading: false, // Прибираємо стрілку назад
+        automaticallyImplyLeading: false,
       ),
       body: SafeArea(
         child: Column(
@@ -64,17 +88,30 @@ class _RidesScreenState extends State<RidesScreen> {
               ),
             ),
 
-            // Список поїздок
+            // Список поїздок із можливістю кліку для редагування
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 itemCount: _mockRides.length,
                 itemBuilder: (context, index) {
                   final ride = _mockRides[index];
-                  return _buildRideCard(
-                    date: ride['date']!,
-                    distance: ride['distance']!,
-                    duration: ride['duration']!,
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () {
+                      // Перехід на екран у режимі редагування з передачею даних
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AddRideScreen(initialData: ride),
+                        ),
+                      );
+                    },
+                    child: _buildRideCard(
+                      date: ride['date']!,
+                      distance: ride['distance']!,
+                      duration: ride['duration']!,
+                    ),
                   );
                 },
               ),
@@ -83,7 +120,7 @@ class _RidesScreenState extends State<RidesScreen> {
         ),
       ),
 
-      // Помаранчева плаваюча кнопка
+      // Кнопка для додавання нової поїздки (без initialData)
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -95,56 +132,9 @@ class _RidesScreenState extends State<RidesScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: const Icon(Icons.add, color: Colors.white, size: 28),
       ),
-
-      // Нижня навігаційна панель
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFFFF6B00),
-        unselectedItemColor: const Color(0xFF757575),
-        showUnselectedLabels: true,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          } else if (index == 3) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const ProfileScreen()),
-            );
-          } else {
-            setState(() {
-              _selectedIndex = index;
-            });
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.format_list_bulleted),
-            label: 'Rides',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.build_outlined),
-            label: 'Repairs',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
     );
   }
 
-  // Метод для створення фільтрів
   Widget _buildFilterChip(String label, {bool isSelected = false}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -166,7 +156,6 @@ class _RidesScreenState extends State<RidesScreen> {
     );
   }
 
-  // Картка окремої поїздки
   Widget _buildRideCard({
     required String date,
     required String distance,
@@ -180,7 +169,7 @@ class _RidesScreenState extends State<RidesScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: Colors.black.withOpacity(0.02),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -189,7 +178,6 @@ class _RidesScreenState extends State<RidesScreen> {
       ),
       child: Row(
         children: [
-          // Помаранчева іконка велосипеда
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -203,8 +191,6 @@ class _RidesScreenState extends State<RidesScreen> {
             ),
           ),
           const SizedBox(width: 16),
-
-          // Текстові дані
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,8 +230,6 @@ class _RidesScreenState extends State<RidesScreen> {
               ],
             ),
           ),
-
-          // Стрілочка переходу
           const Icon(Icons.chevron_right, color: Color(0xFF9E9E9E)),
         ],
       ),

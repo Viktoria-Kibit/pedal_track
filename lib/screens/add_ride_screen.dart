@@ -1,20 +1,15 @@
+// lib/screens/add_ride_screen.dart
 import 'package:flutter/material.dart';
 
+import '../core/widgets/delete_confirmation_dialog.dart';
 import '../core/widgets/custom_button.dart';
-import '../core/widgets/custom_textfield.dart';
-import 'home_screen.dart';
-import 'profile_screen.dart';
-import 'rides_screen.dart';
 
-class AddRideScreen extends StatefulWidget {
-  const AddRideScreen({super.key});
+class AddRideScreen extends StatelessWidget {
+  final Map<String, String>? initialData;
 
-  @override
-  State<AddRideScreen> createState() => _AddRideScreenState();
-}
+  const AddRideScreen({super.key, this.initialData});
 
-class _AddRideScreenState extends State<AddRideScreen> {
-  int _selectedIndex = 1; // Вкладка Rides залишається активною
+  bool get isEditing => initialData != null;
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +20,11 @@ class _AddRideScreenState extends State<AddRideScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF1E1E1E)),
-          onPressed: () {
-            Navigator.pop(context); // Повернення на попередній екран
-          },
+          onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Add Ride',
-          style: TextStyle(
+        title: Text(
+          isEditing ? 'Update Ride' : 'Add Ride',
+          style: const TextStyle(
             color: Color(0xFF1E1E1E),
             fontWeight: FontWeight.bold,
             fontSize: 22,
@@ -44,23 +37,22 @@ class _AddRideScreenState extends State<AddRideScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Поле Date
-              const CustomTextField(
+              _buildLabeledTextField(
                 label: 'Date',
                 hint: 'Sep 29, 2026',
+                initialValue: initialData?['date'],
                 prefixIcon: Icons.calendar_today_outlined,
               ),
               const SizedBox(height: 20),
 
-              // Поле Distance
-              const CustomTextField(
+              _buildLabeledTextField(
                 label: 'Distance',
                 hint: 'e.g. 45 km',
-                prefixIcon: Icons.route_outlined, // Або Icons.timeline
+                initialValue: initialData?['distance'],
+                prefixIcon: Icons.route_outlined,
               ),
               const SizedBox(height: 20),
 
-              // Поле Duration (дві колонки)
               const Text(
                 'Duration',
                 style: TextStyle(
@@ -75,16 +67,24 @@ class _AddRideScreenState extends State<AddRideScreen> {
                   Expanded(
                     child: _buildSimpleTextField(
                       hint: 'h',
+                      initialValue:
+                          initialData?['hours'] ?? (isEditing ? '2 h' : null),
                       prefixIcon: Icons.access_time,
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(child: _buildSimpleTextField(hint: 'min')),
+                  Expanded(
+                    child: _buildSimpleTextField(
+                      hint: 'min',
+                      initialValue:
+                          initialData?['minutes'] ??
+                          (isEditing ? '27 min' : null),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
 
-              // Поле Notes
               const Text(
                 'Notes',
                 style: TextStyle(
@@ -94,8 +94,11 @@ class _AddRideScreenState extends State<AddRideScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              TextField(
-                maxLines: 4, // Робить поле великим
+              TextFormField(
+                maxLines: 4,
+                initialValue:
+                    initialData?['notes'] ??
+                    (isEditing ? 'Some notes about ride' : null),
                 decoration: InputDecoration(
                   hintText: 'Add ride notes...',
                   hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
@@ -118,75 +121,79 @@ class _AddRideScreenState extends State<AddRideScreen> {
               ),
               const SizedBox(height: 32),
 
-              // Кнопка збереження
+              // Головна кнопка дії
               CustomButton(
-                text: 'Save Ride',
-                onPressed: () {
-                  // Повертаємось на екран списку поїздок
-                  Navigator.pop(context);
-                },
+                text: isEditing ? 'Update Ride' : 'Save Ride',
+                onPressed: () => Navigator.pop(context),
               ),
+
+              // Кнопка видалення (з'являється лише в режимі редагування)
+              if (isEditing) ...[
+                const SizedBox(height: 12),
+                CustomButton(
+                  text: 'Delete',
+                  backgroundColor: const Color(0xFFBEBEBE),
+                  textColor: Colors.white,
+                  onPressed: () async {
+                    final confirmed = await showDeleteConfirmationDialog(
+                      context,
+                    );
+                    if (confirmed == true && context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ],
             ],
           ),
         ),
       ),
+    );
+  }
 
-      // Нижня навігаційна панель
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFFFF6B00),
-        unselectedItemColor: const Color(0xFF757575),
-        showUnselectedLabels: true,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          } else if (index == 1) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const RidesScreen()),
-            );
-          } else if (index == 3) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const ProfileScreen()),
-            );
-          } else {
-            setState(() {
-              _selectedIndex = index;
-            });
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.format_list_bulleted),
-            label: 'Rides',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.build_outlined),
-            label: 'Repairs',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+  Widget _buildLabeledTextField({
+    required String label,
+    required String hint,
+    String? initialValue,
+    IconData? prefixIcon,
+  }) {
+    return TextFormField(
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        prefixIcon: prefixIcon != null
+            ? Icon(prefixIcon, color: const Color(0xFF757575))
+            : null,
+        filled: true,
+        fillColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 16,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFFF6B00)),
+        ),
       ),
     );
   }
 
-  // Локальний віджет для полів тривалості (щоб іконка була опціональною)
-  Widget _buildSimpleTextField({required String hint, IconData? prefixIcon}) {
-    return TextField(
+  Widget _buildSimpleTextField({
+    required String hint,
+    String? initialValue,
+    IconData? prefixIcon,
+  }) {
+    return TextFormField(
+      initialValue: initialValue,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
