@@ -1,17 +1,59 @@
-# pedal_track
+# PedalTrack
 
-A new Flutter project.
+PedalTrack — кросплатформний Flutter-застосунок для ведення журналу велопоїздок і обслуговування велосипеда. Проєкт створено для лабораторної роботи №3 з дисципліни «Кросплатформне програмування»: він демонструє базову структуру застосунку та основні екрани за розробленим дизайном.
 
-## Getting Started
+## Можливості інтерфейсу
 
-This project is a starting point for a Flutter application.
+- Вхід і реєстрація з переходами між екранами.
+- Домашній екран зі статистикою поїздок і швидким доступом до розділів.
+- Перегляд списків поїздок і ремонтів, а також форми для додавання та редагування записів.
+- Профіль із полями особистих даних і зміни пароля.
+- Спільні елементи інтерфейсу: кнопка та текстове поле.
 
-A few resources to get you started if this is your first Flutter project:
+## Межі реалізації
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Це навчальний UI-прототип без бізнес-логіки та серверної частини. Авторизація й реєстрація не перевіряють введені дані, а записи поїздок, ремонтів і статистика є демонстраційними даними в коді. Форми не зберігають зміни. Посилання для відновлення пароля поки що є заглушкою; оновлення профілю лише показує повідомлення.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Структура проєкту
+
+```text
+lib/
+├── main.dart
+├── core/
+│   └── widgets/
+│       ├── custom_button.dart
+│       ├── custom_textfield.dart
+│       └── delete_confirmation_dialog.dart
+└── screens/
+    ├── add_repair_screen.dart
+    ├── add_ride_screen.dart
+    ├── home_screen.dart
+    ├── login_screen.dart
+    ├── main_screen.dart
+    ├── profile_screen.dart
+    ├── register_screen.dart
+    ├── repairs_screen.dart
+    └── rides_screen.dart
+
+test/
+└── widget_test.dart
+```
+
+Точка входу — `lib/main.dart`. Після входу або реєстрації відкривається `MainScreen` із нижньою навігацією між домашнім екраном, поїздками, ремонтами та профілем. Повторно використовувані віджети розміщені в `lib/core/widgets/`.
+
+## Запуск
+
+Потрібні встановлені Flutter SDK і сумісний емулятор або пристрій.
+
+```bash
+flutter pub get
+flutter run
+```
+
+## Перевірки
+
+У `test/widget_test.dart` поки залишився початковий шаблонний тест лічильника Flutter. Його потрібно адаптувати до екранів PedalTrack перед використанням як перевірки застосунку.
+
+## Репозиторій
+
+[github.com/Viktoria-Kibit/pedal_track](https://github.com/Viktoria-Kibit/pedal_track)
