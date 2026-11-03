@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 
 import 'profile_screen.dart';
 import 'rides_screen.dart';
-import 'add_ride_screen.dart'; // Обов'язковий імпорт нового екрана
+import 'add_ride_screen.dart';
+import 'add_repair_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -167,7 +168,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() {
                   _isDialOpen = false;
                 });
-                // Тут буде навігація на екран Add Repair у майбутньому
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddRepairScreen(),
+                  ),
+                );
               },
             ),
             const SizedBox(height: 16),
@@ -189,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 16),
           ],
 
-          // Головна кнопка (змінюється на хрестик при відкритті)
+          // Головна кнопка
           FloatingActionButton(
             heroTag: 'main_fab',
             onPressed: () {
@@ -276,12 +282,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(width: 16),
         FloatingActionButton(
-          heroTag:
-              label, // Обов'язково різні теги, щоб Flutter не плутав анімації
+          heroTag: label,
           mini: true,
           onPressed: onTap,
           backgroundColor: const Color(0xFFFF6B00),
-          shape: const CircleBorder(), // Кругла форма за макетом
+          shape: const CircleBorder(),
           child: Icon(icon, color: Colors.white, size: 20),
         ),
       ],
