@@ -1,7 +1,9 @@
+// lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
 
 import 'profile_screen.dart';
 import 'rides_screen.dart';
+import 'add_ride_screen.dart'; // Обов'язковий імпорт нового екрана
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  // Hardcoded дані згідно з вимогою методички
   static const String _totalDistance = '1,250 km';
   static const String _ridesCompleted = '86 rides';
   static const String _avgSpeed = '22.4 km/h';
@@ -18,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const String _longestRide = '62 km';
 
   int _selectedIndex = 0;
+  bool _isDialOpen = false; // Стан для відкриття/закриття меню кнопок
 
   @override
   Widget build(BuildContext context) {
@@ -36,114 +40,176 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         automaticallyImplyLeading: false,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Головна картка статистики
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'TOTAL DISTANCE',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF757575),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFEECC),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text(
-                            'LIFETIME',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFFF6B00),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Divider(
-                      height: 24,
-                      thickness: 1,
-                      color: Color(0xFFEEEEEE),
-                    ),
-                    const Text(
-                      _totalDistance,
-                      style: TextStyle(
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E1E1E),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildSubStat(
-                            'Rides Completed',
-                            _ridesCompleted,
-                          ),
-                        ),
-                        Expanded(child: _buildSubStat('Avg Speed', _avgSpeed)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Картки нижнього ряду
-              Row(
+      // Використовуємо Stack, щоб можна було накласти темний фон поверх вмісту
+      body: Stack(
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: _buildSmallCard('This Week', _thisWeek)),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildSmallCard('Longest Ride', _longestRide),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'TOTAL DISTANCE',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF757575),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFEECC),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text(
+                                'LIFETIME',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFFF6B00),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(
+                          height: 24,
+                          thickness: 1,
+                          color: Color(0xFFEEEEEE),
+                        ),
+                        const Text(
+                          _totalDistance,
+                          style: TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1E1E1E),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildSubStat(
+                                'Rides Completed',
+                                _ridesCompleted,
+                              ),
+                            ),
+                            Expanded(
+                              child: _buildSubStat('Avg Speed', _avgSpeed),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(child: _buildSmallCard('This Week', _thisWeek)),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildSmallCard('Longest Ride', _longestRide),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+
+          // Темний шар, який з'являється при натисканні на FAB
+          if (_isDialOpen)
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  _isDialOpen = false;
+                });
+              },
+              child: Container(color: Colors.black.withOpacity(0.5)),
+            ),
+        ],
       ),
 
-      // Плаваюча кнопка (FAB)
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xFFFF6B00),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: const Icon(Icons.add, color: Colors.white, size: 28),
+      // Кастомне Speed Dial меню
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          if (_isDialOpen) ...[
+            _buildDialOption(
+              icon: Icons.build,
+              label: 'Add Repair',
+              onTap: () {
+                setState(() {
+                  _isDialOpen = false;
+                });
+                // Тут буде навігація на екран Add Repair у майбутньому
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildDialOption(
+              icon: Icons.directions_bike,
+              label: 'Add Ride',
+              onTap: () {
+                setState(() {
+                  _isDialOpen = false;
+                });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AddRideScreen(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          // Головна кнопка (змінюється на хрестик при відкритті)
+          FloatingActionButton(
+            heroTag: 'main_fab',
+            onPressed: () {
+              setState(() {
+                _isDialOpen = !_isDialOpen;
+              });
+            },
+            backgroundColor: const Color(0xFFFF6B00),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(
+              _isDialOpen ? Icons.close : Icons.add,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+        ],
       ),
 
-      // Нижня панель навігації
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         type: BottomNavigationBarType.fixed,
@@ -156,8 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
               context,
               MaterialPageRoute(builder: (context) => const RidesScreen()),
             );
-          }
-          if (index == 3) {
+          } else if (index == 3) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const ProfileScreen()),
@@ -184,6 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
             label: 'Profile',
           ),
         ],
@@ -191,7 +257,37 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Допоміжний метод для тексту в головній картці
+  // Допоміжний метод для малих кнопок у меню
+  Widget _buildDialOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(width: 16),
+        FloatingActionButton(
+          heroTag:
+              label, // Обов'язково різні теги, щоб Flutter не плутав анімації
+          mini: true,
+          onPressed: onTap,
+          backgroundColor: const Color(0xFFFF6B00),
+          shape: const CircleBorder(), // Кругла форма за макетом
+          child: Icon(icon, color: Colors.white, size: 20),
+        ),
+      ],
+    );
+  }
+
   Widget _buildSubStat(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,7 +309,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Допоміжний метод для малих карток
   Widget _buildSmallCard(String label, String value) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -222,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
