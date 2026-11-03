@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'profile_screen.dart';
+import 'rides_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -150,6 +151,12 @@ class _HomeScreenState extends State<HomeScreen> {
         unselectedItemColor: const Color(0xFF757575),
         showUnselectedLabels: true,
         onTap: (index) {
+          if (index == 1) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const RidesScreen()),
+            );
+          }
           if (index == 3) {
             Navigator.pushReplacement(
               context,
